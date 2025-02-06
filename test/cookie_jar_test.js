@@ -540,5 +540,20 @@ vows
         }
       }
     }
+  }).addBatch({
+    "Test rejectPublicSuffixes doesn't allow Prototype injection": {
+      topic: function () {
+        var cj = new CookieJar(undefined, { rejectPublicSuffixes: false });
+        var c = "polluted=polluted; Domain=__proto__; Path=/notauth";
+        cj.setCookie(c, "https://__proto__/admin", this.callback);
+      },
+      success: function (err, _) {
+        const data = {};
+        const actual = data["/notauth"];
+        const expected = undefined;
+        assert.ok(!err);
+        assert.equal(actual, expected);
+      },
+    },
   })
   .export(module);
